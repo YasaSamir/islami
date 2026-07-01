@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamii/core/constants/app_assets.dart';
 import 'package:islamii/core/constants/app_colors.dart';
 import 'package:islamii/core/theme/custom_text_style.dart';
+import 'package:islamii/features/home/presentation/manager/suwer_cubit.dart';
 import 'package:islamii/features/home/presentation/widgets/custom_text_field.dart';
 import 'package:islamii/features/home/presentation/widgets/recent_sura_list_view.dart';
 import 'package:islamii/features/home/presentation/widgets/sura_list_tile.dart';
@@ -52,16 +54,47 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: 114,
-                    itemBuilder: (context, index) {
-                      return SuraListTile(
-                        suraNumber: '${index + 1}',
-                        suraEnName: 'Al-Fatiha',
-                        suraArName: 'الفاتحه',
-                        versesCount: '7',
-                      );
+                  child: BlocBuilder<SuwerCubit, SuwerState>(
+                    builder: (context, state) {
+                      if (state is SuwerLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (state is SuwerSuccess) {
+                        return ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: state.suwar.length,
+                          itemBuilder: (context, index) {
+                            final sura = state.suwar[index];
+                            return SuraListTile(
+                              suraNumber: '${sura.number}',        // Changed from sura.id
+                              suraEnName: sura.englishName,      // Changed from sura.name (En)
+                              suraArName: sura.name,             // Arabic Name
+                              versesCount: '${sura.numberOfAyahs}', // Changed from page calculation
+                            );
+                          },
+                        );;
+                      } else if (state is SuwerFailure) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Failed to load suwar',
+                                style: TextStyle(color: AppColors.whiteColor),
+                              ),
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    context.read<SuwerCubit>().getSuwar(),
+                                child: const Text('Retry'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      // SuwerInitial — trigger fetch
+                      return const SizedBox.shrink();
                     },
                   ),
                 ),

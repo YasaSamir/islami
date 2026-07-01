@@ -1,39 +1,23 @@
 class SuwarModel {
-  final int id;
+  final int number; // The API uses 'number', not 'id'
   final String name;
-  final int startPage;
-  final int endPage;
-  final int makkia;
-  final int type;
+  final String englishName;
+  final int numberOfAyahs; // Use this instead of pages
 
-  SuwarModel(
-    this.id, {
+  SuwarModel({
+    required this.number,
     required this.name,
-    required this.startPage,
-    required this.endPage,
-    required this.makkia,
-    required this.type,
+    required this.englishName,
+    required this.numberOfAyahs,
   });
 
   factory SuwarModel.fromJson(Map<String, dynamic> json) {
     return SuwarModel(
-        json['id'],
-        name: json['name'],
-        startPage: json['start_page'],
-        endPage: json['end_page'],
-        makkia: json['makkia'],
-        type: json['type']
+      // Ensure these keys match the API response exactly
+      number: json['number'] ?? 0,
+      name: json['name'] ?? '',
+      englishName: json['englishName'] ?? '',
+      numberOfAyahs: json['numberOfAyahs'] ?? 0,
     );
   }
 }
-
-/*
-   {
-            "id": 1,
-            "name": "Al-Fatihah ",
-            "start_page": 1,
-            "end_page": 1,
-            "makkia": 1
-            "type": 0
-        },
- */

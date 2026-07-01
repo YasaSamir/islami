@@ -1,0 +1,17 @@
+flutter_native_splash:
+
+  color: "#000000"  # Fallback color
+
+  background_image: assets/img/splash.png
+
+  branding:  assets/img/branding.png
+
+  android_12:
+
+    image: assets/img/splash.png
+    color: "#000000"
+
+  android: true
+  ios: true
+  web: false
+
